@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>One Bank of Tennessee</title>
+<style>
+/* === Base === */
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #0d1117;
+  color: #c9d1d9;
+}
+
+/* === Login === */
+#loginPage {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.login-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  background-color: #0d1117;
+  padding: 1rem 0;
+  color: #58a6ff;
+  font-weight: bold;
+  font-size: 1.4rem;
+  border-bottom: 1px solid #2d333b;
+  z-index: 2000;
+}
+
+.login-box {
+  background-color: rgba(22, 27, 34, 0.9);
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  width: 90%;
+  max-width: 350px;
+  text-align: center;
+}
+
+.login-box h2 {
+  color: #58a6ff;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 0.6rem;
+  margin: 0.5rem 0;
+  border: none;
+  border-radius: 5px;
+  background-color: #161b22;
+  color: #fff;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 0.7rem;
+  background-color: #238636;
+  border: none;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-box button:hover {
+  background-color: #2ea043;
+}
+
+/* === Dashboard === */
+.dashboard {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background-color: #161b22;
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  z-index: 1000;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.sidebar h2 {
+  color: #58a6ff;
+  margin-bottom: 2rem;
+}
+
+.menu-item {
+  padding: 0.8rem;
+  margin: 0.3rem 0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.menu-item:hover, .menu-item.active {
+  background-color: #238636;
+}
+
+.toggle-btn {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  background: #161b22;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 5px;
+  z-index: 1100;
+}
+
+/* Overlay for mobile */
+#overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0,0,0,0.6);
+  z-index: 900;
+}
+#overlay.active {
+  display: block;
+}
+
+/* === Top Bar === */
+.topbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #161b22;
+  padding: 1rem;
+  border-bottom: 1px solid #2d333b;
+  position: sticky;
+  top: 0;
+  z-index: 800;
+}
+.bank-name {
+  font-size: 1.2rem;
+  color: #58a6ff;
+  font-weight: bold;
+}
+
+/* === Main Content === */
+.main-content {
+  flex-grow: 1;
+  margin-left: 240px;
+  padding: 1rem 1.5rem;
+  overflow-y: auto;
+}
+
+.section {
+  display: none;
+}
+.section.active {
+  display: block;
+}
+
+.header h2 {
+  color: #58a6ff;
+}
+
+.card {
+  background-color: #161b22;
+  padding: 1rem;
+  margin-top: 1rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.balance {
+  color: #3fb950;
+  font-size: 1.6rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+th, td {
+  text-align: left;
+  padding: 0.6rem;
+  border-bottom: 1px solid #30363d;
+}
+.debit { color: #f85149; }
+.credit { color: #3fb950; }
+
+footer {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.8rem;
+  color: #8b949e;
+}
+
+/* === Mobile === */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-260px);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .toggle-btn {
+    display: block;
+  }
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== Login Page ===== -->
+<div id="loginPage">
+  <div class="login-header">One Bank of Tennessee</div>
+  <div class="login-box">
+    <h2>Sign In</h2>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color:red; display:none; margin-top:0.5rem;">Invalid credentials</p>
+  </div>
+</div>
+
+<!-- ===== Dashboard ===== -->
+<div class="dashboard" id="dashboard" style="display:none;">
+  <button class="toggle-btn" onclick="toggleSidebar()">☰</button>
+  <div class="sidebar" id="sidebar">
+    <h2>Menu</h2>
+    <div class="menu-item active" onclick="showSection('home', this)">Home</div>
+    <div class="menu-item" onclick="showSection('accounts', this)">Accounts</div>
+    <div class="menu-item" onclick="showSection('transfers', this)">Transfers</div>
+    <div class="menu-item" onclick="showSection('loans', this)">Loans</div>
+    <div class="menu-item" onclick="showSection('settings', this)">Settings</div>
+    <div class="menu-item" onclick="logout()">Logout</div>
+  </div>
+  <div id="overlay" onclick="closeSidebar()"></div>
+
+  <div class="main-content" id="mainContent">
+    <div class="topbar">
+      <h1 class="bank-name">One Bank of Tennessee</h1>
+    </div>
+
+    <!-- Home -->
+    <div class="section active" id="home">
+      <div class="header">
+        <h2>Welcome, Alex Gallagher</h2>
+        <span>Premium Customer</span>
+      </div>
+      <div class="card">
+        <h2>Account Overview</h2>
+        <p>Available Balance</p>
+        <p class="balance">$22,000,000 USD</p>
+      </div>
+      <div class="card">
+        <h2>Recent Transactions</h2>
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Description</th><th>Status</th><th>Amount</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>19 Apr 2024, 2:08 AM</td><td>ACE/NBOTIOSJM-0424 — Debit Payment</td><td>Completed</td><td class="debit">-30,500,000 USD</td></tr>
+            <tr><td>19 Apr 2024, 2:07 AM</td><td>ACE/4IWRLNTLE-0424 — Debit Payment</td><td>Completed</td><td class="debit">-350,000 USD</td></tr>
+            <tr><td>19 Apr 2024, 2:07 AM</td><td>ACE/FXTSP1QTU-0424 — Debit Payment</td><td>Completed</td><td class="debit">-350,000 USD</td></tr>
+            <tr><td>19 Apr 2024, 2:01 AM</td><td>ACE/SKHTLOPXV-0424 — Debit Payment</td><td>Completed</td><td class="debit">-350,000 USD</td></tr>
+            <tr><td>02 May 2024</td><td>Monthly Salary Allowance</td><td>Completed</td><td class="credit">+200,000 USD</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <footer>© 2025 One Bank of Tennessee. All Rights Reserved.</footer>
+    </div>
+
+    <!-- Accounts -->
+    <div class="section" id="accounts">
+      <div class="card"><h2>Accounts</h2><p>Checking Account – $22,000,000 USD</p><p>Account Number: 1234567890</p></div>
+    </div>
+
+    <!-- Transfers -->
+    <div class="section" id="transfers">
+      <div class="card">
+        <h2>Transfer Funds</h2>
+        <p><strong>Notice:</strong> Account holder presence is required before approving transactions.</p>
+        <button onclick="alert('Error: Account holder presence is needed before approving transaction.')">Make Withdrawal</button>
+      </div>
+    </div>
+
+    <!-- Loans -->
+    <div class="section" id="loans">
+      <div class="card"><h2>Loans</h2><p>No active loans at the moment.</p></div>
+    </div>
+
+    <!-- Settings -->
+    <div class="section" id="settings">
+      <div class="card"><h2>Settings</h2><p>Manage profile and security settings (coming soon).</p></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* === Login Logic === */
+function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const error = document.getElementById("loginError");
+  if (email === "Alexgallagherdgreat@gmail.com" && password === "1Sam1love@2200") {
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("dashboard").style.display = "flex";
+  } else {
+    error.style.display = "block";
+  }
+}
+
+/* === Sidebar Toggle === */
+const sidebar = document.getElementById("sidebar");
+const overlay = document.getElementById("overlay");
+
+function toggleSidebar() {
+  sidebar.classList.toggle("open");
+  overlay.classList.toggle("active");
+}
+function closeSidebar() {
+  sidebar.classList.remove("open");
+  overlay.classList.remove("active");
+}
+
+/* === Menu Navigation === */
+function showSection(id, el) {
+  document.querySelectorAll(".menu-item").forEach(i => i.classList.remove("active"));
+  el.classList.add("active");
+  document.querySelectorAll(".section").forEach(s => s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  if (window.innerWidth <= 768) closeSidebar();
+}
+
+/* === Logout === */
+function logout() {
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("loginPage").style.display = "flex";
+}
+</script>
+</body>
+</html>
